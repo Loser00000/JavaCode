@@ -1,36 +1,40 @@
 package com.inclass;
 
 /*
-    编写老师类：
-    (1) 要求有属性"姓名 name" "年龄 age" "职称 post" "基本工资 salary"
-    (2) 编写业务方法，introduce(), 实现那输出一个教师的信息
-    (3) 编写教师类的三个子类: 教授类，副教授类吗，讲师类。工资级别分别为：
-        教授为1.3、副教授为1.2、讲师为1.1。在三个子类里面都重写父类的introduce() 方法
-    (4) 定义并初始化一个老师对象，调用业务方法，实现对象基本信息的后台打印
+    通过继承实现员工工资核算打印功能
+    父类：员工类
+    子类：部门经理类、普通员工类
+    (1) 部门经理工资 = 1000 + 单日工资 * 天数 * 等级(1.2)
+    (2) 普通员工工资 = 单日工资 * 天数 * 等级(1.0)
+    (3) 员工属性：姓名，单日工资，工作天数
+    (4) 员工方法(打印工资)
+    (5) 普通员工及部门经理都是员工子类，需要重写打印工资方法
+    (6) 定义并初始化普通员工对象，调用打印工资方法输入工资，
+        定义并初始化部门经理对象，调用打印工资方法输入工资
  */
 
 import java.text.DecimalFormat;
 
 public class Main {
     public static void main(String[] args) {
-        Lecturer teather = new Lecturer("王月", 42, "高级讲师", 7000, 1.1);
-        teather.introduce();
+        Manager manager = new Manager("王总", 140, 30, 1.2);
+        manager.setBonus(1000);
+        NormalStaff normalStaff = new NormalStaff("小刘", 80, 30, 1.0);
+        manager.printSalary();
+        normalStaff.printSalary();
     }
 }
 
-class Teather{
+class Staff{
     private String name;
-    private int age;
-    private String post;
-    private double salary;
+    private double dailySalary;
+    private int workDays;
     private double salaryExp;
 
-
-    public Teather(String name, int age, String post, double salaty, double salaryExp) {
+    public Staff(String name, double dailySalary, int workDays, double salaryExp) {
         this.name = name;
-        this.age = age;
-        this.post = post;
-        this.salary = salaty;
+        this.dailySalary = dailySalary;
+        this.workDays = workDays;
         this.salaryExp = salaryExp;
     }
 
@@ -50,68 +54,61 @@ class Teather{
         this.name = name;
     }
 
-    public int getAge() {
-        return age;
+    public double getDailySalary() {
+        return dailySalary;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setDailySalary(double dailySalary) {
+        this.dailySalary = dailySalary;
     }
 
-    public String getPost() {
-        return post;
+    public int getWorkDays() {
+        return workDays;
     }
 
-    public void setPost(String post) {
-        this.post = post;
+    public void setWorkDays(int workDays) {
+        this.workDays = workDays;
     }
 
-    public double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-
-    public void introduce(){
-        DecimalFormat fom = new DecimalFormat("#0.00");
-        System.out.println("姓名: " + getName() +
-                "\n年   龄: " + getAge() +
-                "\n职   称: " + getPost() +
-                "\n工   资: " + fom.format(getSalary() * getSalaryExp()));
+    public void printSalary() {
+        DecimalFormat defor = new DecimalFormat("#0.00");
+        double sum = dailySalary * workDays * salaryExp;
+        System.out.println("员工的工资:" +
+                defor.format(sum));
     }
 }
 
-class Professor extends Teather{
-    public Professor(String name, int age, String post, double salary, double salaryExp) {
-        super(name, age, post, salary, salaryExp);
+class Manager extends Staff {
+    private double bonus;
+
+    public Manager(String name, double dailySalary, int workDays, double salaryExp) {
+        super(name, dailySalary, workDays, salaryExp);
     }
 
-    public void introduce(){
-        System.out.print("教授");
-        super.introduce();
+    public double getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(double bonus) {
+        this.bonus = bonus;
+    }
+
+    @Override
+    public void printSalary() {
+        DecimalFormat defor = new DecimalFormat("#0.00");
+        double sum = getDailySalary() * getWorkDays() * getSalaryExp() + bonus;
+        System.out.println("经理的工资:" + defor.format(sum));
     }
 }
 
-class AssProfessor extends Teather{
-    public AssProfessor(String name, int age, String post, double salary, double salaryExp) {
-        super(name, age, post, salary, salaryExp);
+class NormalStaff extends Staff {
+
+    public NormalStaff(String name, double dailySalary, int workDays, double salaryExp) {
+        super(name, dailySalary, workDays, salaryExp);
     }
 
-    public void introduce(){
-        System.out.print("副教授");
-        super.introduce();
-    }
-}
-
-class Lecturer extends Teather{
-    public Lecturer(String name, int age, String post, double salary, double salaryExp) {
-        super(name, age, post, salary, salaryExp);
-    }
-
-    public void introduce(){
-        System.out.print("讲师");
-        super.introduce();
+    @Override
+    public void printSalary() {
+        super.printSalary();
     }
 }
